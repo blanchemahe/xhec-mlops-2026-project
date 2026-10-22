@@ -1,7 +1,7 @@
 """Build a copy of the dashboard that works without a server (for a static host).
 
 The model coefficients and the metrics are put inside the page, so it needs nothing else.
-Run from the project root, after training: PYTHONPATH=. uv run python bin/build_static.py
+Run from the project root, after training: uv run python -m bin.build_static
 The result is docs/index.html (GitHub Pages can serve the docs/ folder).
 """
 
