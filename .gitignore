@@ -85,3 +85,8 @@ secrets/*
 
 # Data
 data/
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow.db
