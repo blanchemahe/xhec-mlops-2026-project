@@ -55,6 +55,19 @@ unzip -o data/abalone.zip -d data && rm data/abalone.zip
 
 You should end up with `data/abalone.csv` (4,177 rows, 9 columns).
 
+## Notebooks (EDA and modelling)
+
+The analysis behind the model is in `notebooks/`:
+
+- `eda.ipynb`: data quality checks (9 physically impossible rows found), target and feature analysis, and the decisions taken for the modelling.
+- `modelling.ipynb`: baseline, linear regression and random forest compared by cross-validation, with every run tracked in MLflow. The linear regression is selected and registered as `abalone-rings-regressor` with the `champion` alias.
+
+Open them in VS Code or Jupyter with the `.venv` kernel, after downloading the dataset. The MLflow runs are stored locally in `mlflow.db` and `mlruns/` (ignored by git). To compare them, run from the project root, then open http://localhost:5001:
+
+```bash
+uv run mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5001
+```
+
 ## Train the model
 
 ```bash
