@@ -6,7 +6,7 @@
 
 <a href="https://louanbardou.github.io/xhec-mlops-2026-project/"><img src="docs/dashboard-cropped.jpg" alt="Dashboard" width="50%"></a>
 
-**Live demo: https://louanbardou.github.io/xhec-mlops-2026-project/** (move the sliders, the abalone grows and the age updates; the "Age drivers" panel shows what counts in the model). See [Dashboard](#dashboard).
+**Live demo: https://louanbardou.github.io/xhec-mlops-2026-project/**
 
 Predict the age of abalones (number of shell rings) from simple physical measurements, instead of cutting, staining and counting rings under a microscope.
 
@@ -100,19 +100,13 @@ curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
 
 ## Dashboard
 
-One web page served by the API (no extra dependency, no build): a single ocean scene.
-
-- **Left**: sliders for the measurements. The 3 partial weights can never exceed the whole weight.
-- **Center**: the abalone grows ring by ring up to its predicted age when the page opens, and the growth replays when a slider stops. The model is a linear regression, so the page computes the estimate from the coefficients of `/model` (no delay).
-- **Right**: "Age drivers", the share of each measurement in the linear regression (coefficient x realistic range of the measurement, in %), biggest first.
+An ocean scene served by the API: move the sliders (left) and the abalone grows ring by ring up to its predicted age. The "Age drivers" panel (right) shows how much each measurement counts in the linear model.
 
 ```bash
-uv run uvicorn src.web_service.main:app --port 8001   # train the model first, then open http://127.0.0.1:8001/dashboard
+uv run uvicorn src.web_service.main:app --port 8001   # train first, then open http://127.0.0.1:8001/dashboard
 ```
 
-With Docker: http://localhost:8000/dashboard. The typical error shown under the age comes from `src/web_service/local_objects/metrics.jsonl` (one line added at each training).
-
-A copy that needs no server (model and metrics embedded in the page) is built with `PYTHONPATH=. uv run python bin/build_static.py` into `docs/index.html`, to put on any static host (GitHub Pages serves `docs/`).
+With Docker: http://localhost:8000/dashboard. A copy that needs no server (used by GitHub Pages) is built into `docs/index.html` with `uv run python -m bin.build_static`.
 
 ## Development
 
