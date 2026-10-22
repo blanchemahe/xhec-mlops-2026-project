@@ -76,6 +76,24 @@ Open http://127.0.0.1:4200 to see the deployment and the flow runs. To test with
 
 `fastapi` is capped below 0.151 because newer versions break the Prefect server.
 
+## API (FastAPI + Docker)
+
+`POST /predict` returns the rings and the age (rings + 1.5) of one abalone. Inputs are validated with Pydantic.
+
+```bash
+# Without Docker (train the model first)
+uv run uvicorn src.web_service.main:app --port 8001   # http://127.0.0.1:8001/docs
+
+# With Docker (needs data/abalone.csv, the model is trained at build)
+docker build -f Dockerfile.app -t abalone-app .
+docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-app   # API :8000, Prefect UI :4200
+```
+
+```bash
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
+  -d '{"sex": "M", "length": 0.455, "diameter": 0.365, "height": 0.095, "whole_weight": 0.514, "shucked_weight": 0.2245, "viscera_weight": 0.101, "shell_weight": 0.15}'
+```
+
 ## Development
 
 ### Managing dependencies
