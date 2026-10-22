@@ -1,18 +1,37 @@
 # Code with FastAPI (app = FastAPI(...))
 
+from fastapi import FastAPI, HTTPException
 
-from fastapi import FastAPI
+from src.web_service.lib.inference import run_inference
+from src.web_service.lib.models import AbaloneInput, PredictionOutput
 
-# Other imports
-
-app = FastAPI(title="...", description="...")
+app = FastAPI(
+    title="Abalone age prediction",
+    description="Predicts the number of rings (and the age) of an abalone from its measurements.",
+)
 
 
 @app.get("/")
 def home() -> dict:
+    """Health check, to see if the API is running."""
     return {"health_check": "App up and running!"}
 
 
-@app.post("/predict", response_model="InsertHereAPydanticClass", status_code=201)
-def predict(payload: "InsertHereAPydanticClass") -> dict:
-    # TODO: complete and replace the "InsertHereAPydanticClass" with the correct Pydantic classes defined in web_service/lib/models.py
+# Pydantic checks the body of the request with AbaloneInput before our code runs
+@app.post("/predict", response_model=PredictionOutput, status_code=201)
+def predict(payload: AbaloneInput) -> PredictionOutput:
+    """Predict the number of rings and the age of an abalone.
+
+    Args:
+        payload: The measurements of the abalone.
+
+    Returns:
+        The predicted rings and the age.
+
+    Raises:
+        HTTPException: 503 if the model was not trained yet.
+    """
+    try:
+        return run_inference(payload)
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=503, detail="Model not found, train it first.") from error
