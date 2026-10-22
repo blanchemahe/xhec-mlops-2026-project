@@ -85,3 +85,6 @@ secrets/*
 
 # Data
 data/
+
+# Trained model
+src/web_service/local_objects/*.pkl
