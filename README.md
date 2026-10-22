@@ -4,7 +4,7 @@
 [![Linting: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](.pre-commit-config.yaml)
 
-[![Dashboard](docs/dashboard-cropped.jpg)](https://louanbardou.github.io/xhec-mlops-2026-project/)
+<a href="https://louanbardou.github.io/xhec-mlops-2026-project/"><img src="docs/dashboard-cropped.jpg" alt="Dashboard" width="50%"></a>
 
 **Live demo: https://louanbardou.github.io/xhec-mlops-2026-project/** (move the sliders, the abalone grows and the age updates; the "Age drivers" panel shows what counts in the model). See [Dashboard](#dashboard).
 
