@@ -51,6 +51,17 @@ unzip -o data/abalone.zip -d data && rm data/abalone.zip
 
 You should end up with `data/abalone.csv` (4,177 rows, 9 columns).
 
+## Train the model
+
+```bash
+uv run python -m src.modelling.main data/abalone.csv
+```
+
+The model is saved in `src/web_service/local_objects/model.pkl` (ignored by git). The code is in `src/modelling/`: `preprocessing.py` (load + split), `training.py` (model + metrics), `utils.py` (save and load the model), `predicting.py` (predict with the saved model), `main.py` (runs everything).
+The model is a linear regression, with `Sex` one-hot encoded inside a sklearn pipeline.
+
+Run the tests with `uv run pytest`.
+
 ## Development
 
 ### Managing dependencies
