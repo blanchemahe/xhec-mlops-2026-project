@@ -12,7 +12,7 @@ Predict the age of abalones (number of shell rings) from simple physical measure
 |---|---|
 | Lancelot Brisset | [@brissetlancelot92](https://github.com/brissetlancelot92) |
 | Louan Bardou | [@louan-username](https://github.com/louan-username) |
-| Blanche Mahé | [@blanche-username](https://github.com/blanche-username) |
+| Blanche Mahé | [@blanchemahe](https://github.com/blanchemahe) |
 | Alix Bernal | [@alix-username](https://github.com/alix-username) |
 
 ## Setup
@@ -27,7 +27,7 @@ Predict the age of abalones (number of shell rings) from simple physical measure
 
 ```bash
 # Clone the repository
-git clone https://github.com/brissetlancelot92/xhec-mlops-2026-project.git
+git clone https://github.com/blanchemahe/xhec-mlops-2026-project.git
 cd xhec-mlops-2026-project
 
 # Create the virtual environment (.venv) and install all dependencies from uv.lock
