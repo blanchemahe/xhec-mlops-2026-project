@@ -4,6 +4,10 @@
 [![Linting: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](.pre-commit-config.yaml)
 
+<a href="https://louanbardou.github.io/xhec-mlops-2026-project/"><img src="docs/dashboard-cropped.jpg" alt="Dashboard" width="50%"></a>
+
+**Live demo: https://louanbardou.github.io/xhec-mlops-2026-project/**
+
 Predict the age of abalones (number of shell rings) from simple physical measurements, instead of cutting, staining and counting rings under a microscope.
 
 ## Team
@@ -50,6 +54,59 @@ unzip -o data/abalone.zip -d data && rm data/abalone.zip
 ```
 
 You should end up with `data/abalone.csv` (4,177 rows, 9 columns).
+
+## Train the model
+
+```bash
+uv run python -m src.modelling.main data/abalone.csv
+```
+
+The model is saved in `src/web_service/local_objects/model.pkl` (ignored by git). The code is in `src/modelling/`: `step1_preprocessing.py` (load + split), `step2_training.py` (model + metrics), `step2_1_utils.py` (save and load the model), `step3_predicting.py` (predict with the saved model), `main.py` (runs everything).
+The model is a linear regression, with `Sex` one-hot encoded inside a sklearn pipeline.
+
+Run the tests with `uv run pytest`.
+
+## Prefect (automatic retraining)
+
+`main.py` is a Prefect flow (one task per step), so `uv run python -m src.modelling.main data/abalone.csv` runs it once. To retrain every Monday at 3am, use 2 terminals:
+
+```bash
+uv run prefect server start          # terminal 1: prefect server, UI on http://127.0.0.1:4200
+uv run python -m src.modelling.deploy   # terminal 2: creates the "weekly-retraining" deployment (keep it running)
+```
+
+Open http://127.0.0.1:4200 to see the deployment and the flow runs. To test without waiting for Monday, click "Run" on the deployment in the UI, or in a 3rd terminal:
+`uv run prefect deployment run 'train-abalone-model/weekly-retraining'`
+
+`fastapi` is capped below 0.151 because newer versions break the Prefect server.
+
+## API (FastAPI + Docker)
+
+`POST /predict` returns the rings and the age (rings + 1.5) of one abalone. Inputs are validated with Pydantic.
+
+```bash
+# Without Docker (train the model first)
+uv run uvicorn src.web_service.main:app --port 8001   # http://127.0.0.1:8001/docs
+
+# With Docker (needs data/abalone.csv, the model is trained at build)
+docker build -f Dockerfile.app -t abalone-app .
+docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-app   # API :8000, Prefect UI :4200
+```
+
+```bash
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
+  -d '{"sex": "M", "length": 0.455, "diameter": 0.365, "height": 0.095, "whole_weight": 0.514, "shucked_weight": 0.2245, "viscera_weight": 0.101, "shell_weight": 0.15}'
+```
+
+## Dashboard
+
+An ocean scene served by the API: move the sliders (left) and the abalone grows ring by ring up to its predicted age. The "Age drivers" panel (right) shows how much each measurement counts in the linear model.
+
+```bash
+uv run uvicorn src.web_service.main:app --port 8001   # train first, then open http://127.0.0.1:8001/dashboard
+```
+
+With Docker: http://localhost:8000/dashboard. A copy that needs no server (used by GitHub Pages) is built into `docs/index.html` with `uv run python -m bin.build_static`.
 
 ## Development
 
