@@ -5,9 +5,9 @@ from pathlib import Path
 
 from prefect import flow, task
 
-from src.modelling.preprocessing import load_data, split_data
-from src.modelling.training import evaluate_model, train_model
-from src.modelling.utils import pickle_object
+from src.modelling.step1_preprocessing import load_data, split_data
+from src.modelling.step2_1_utils import pickle_object
+from src.modelling.step2_training import evaluate_model, train_model
 
 # task(...) turns a normal function into a prefect task
 # Prefect then shows each step (and if it worked) in the UI
