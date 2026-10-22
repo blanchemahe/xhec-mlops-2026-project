@@ -4,6 +4,10 @@
 [![Linting: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](.pre-commit-config.yaml)
 
+[![Dashboard](docs/dashboard.jpg)](https://louanbardou.github.io/xhec-mlops-2026-project/)
+
+**Live demo: https://louanbardou.github.io/xhec-mlops-2026-project/** (move the sliders, the abalone grows and the age updates; the "Age drivers" panel shows what counts in the model). See [Dashboard](#dashboard).
+
 Predict the age of abalones (number of shell rings) from simple physical measurements, instead of cutting, staining and counting rings under a microscope.
 
 ## Team
@@ -93,6 +97,22 @@ docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-app   # API :8000, 
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
   -d '{"sex": "M", "length": 0.455, "diameter": 0.365, "height": 0.095, "whole_weight": 0.514, "shucked_weight": 0.2245, "viscera_weight": 0.101, "shell_weight": 0.15}'
 ```
+
+## Dashboard
+
+One web page served by the API (no extra dependency, no build): a single ocean scene.
+
+- **Left**: sliders for the measurements. The 3 partial weights can never exceed the whole weight.
+- **Center**: the abalone grows ring by ring up to its predicted age when the page opens, and the growth replays when a slider stops. The model is a linear regression, so the page computes the estimate from the coefficients of `/model` (no delay).
+- **Right**: "Age drivers", the share of each measurement in the linear regression (coefficient x realistic range of the measurement, in %), biggest first.
+
+```bash
+uv run uvicorn src.web_service.main:app --port 8001   # train the model first, then open http://127.0.0.1:8001/dashboard
+```
+
+With Docker: http://localhost:8000/dashboard. The typical error shown under the age comes from `src/web_service/local_objects/metrics.jsonl` (one line added at each training).
+
+A copy that needs no server (model and metrics embedded in the page) is built with `PYTHONPATH=. uv run python bin/build_static.py` into `docs/index.html`, to put on any static host (GitHub Pages serves `docs/`).
 
 ## Development
 
