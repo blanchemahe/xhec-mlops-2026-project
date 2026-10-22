@@ -6,7 +6,7 @@
 
 [![Dashboard](docs/dashboard.jpg)](https://louanbardou.github.io/xhec-mlops-2026-project/)
 
-**Live demo: https://louanbardou.com/abalone** (move the sliders, the abalone grows and the age updates; the "Age drivers" panel shows what counts in the model). See [Dashboard](#dashboard).
+**Live demo: https://louanbardou.github.io/xhec-mlops-2026-project/** (move the sliders, the abalone grows and the age updates; the "Age drivers" panel shows what counts in the model). See [Dashboard](#dashboard).
 
 Predict the age of abalones (number of shell rings) from simple physical measurements, instead of cutting, staining and counting rings under a microscope.
 
