@@ -11,9 +11,9 @@ Predict the age of abalones (number of shell rings) from simple physical measure
 | Name | GitHub |
 |---|---|
 | Lancelot Brisset | [@brissetlancelot92](https://github.com/brissetlancelot92) |
-| Louan Bardou | [@louan-username](https://github.com/louan-username) |
+| Louan Bardou | [@louanbardou](https://github.com/louanbardou) |
 | Blanche Mahé | [@blanchemahe](https://github.com/blanchemahe) |
-| Alix Bernal | [@alix-username](https://github.com/alix-username) |
+| Alix Bernal | [@ALX-7777](https://github.com/ALX-7777) |
 
 ## Setup
 
