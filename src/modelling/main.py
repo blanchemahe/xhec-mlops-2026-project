@@ -3,11 +3,23 @@
 import argparse
 from pathlib import Path
 
+from prefect import flow, task
+
 from src.modelling.preprocessing import load_data, split_data
 from src.modelling.training import evaluate_model, train_model
 from src.modelling.utils import pickle_object
 
+# task(...) turns a normal function into a prefect task
+# Prefect then shows each step (and if it worked) in the UI
+load_data_task = task(load_data)
+split_data_task = task(split_data)
+train_model_task = task(train_model)
+evaluate_model_task = task(evaluate_model)
+pickle_object_task = task(pickle_object)
 
+
+# A flow is the whole pipeline, made of tasks. log_prints=True shows our prints in the Prefect logs
+@flow(name="train-abalone-model", log_prints=True)
 def main(trainset_path: Path) -> None:
     """Train a model using the data at the given path and save the model (pickle).
 
@@ -15,15 +27,15 @@ def main(trainset_path: Path) -> None:
         trainset_path: Path to the training csv.
     """
     # 1. Read and clean the data
-    df = load_data(trainset_path)
+    df = load_data_task(trainset_path)
     # 2. Split into train and test
-    X_train, X_test, y_train, y_test = split_data(df)
+    X_train, X_test, y_train, y_test = split_data_task(df)
     # 3. Train the model
-    model = train_model(X_train, y_train)
+    model = train_model_task(X_train, y_train)
     # 4. Check how good it is on the test set
-    print("Test metrics:", evaluate_model(model, X_test, y_test))
+    print("Test metrics:", evaluate_model_task(model, X_test, y_test))
     # 5. Save the model, the API will load it
-    pickle_object(model)
+    pickle_object_task(model)
 
 
 if __name__ == "__main__":
