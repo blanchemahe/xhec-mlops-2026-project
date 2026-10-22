@@ -62,6 +62,20 @@ The model is a linear regression, with `Sex` one-hot encoded inside a sklearn pi
 
 Run the tests with `uv run pytest`.
 
+## Prefect (automatic retraining)
+
+`main.py` is a Prefect flow (one task per step), so `uv run python -m src.modelling.main data/abalone.csv` runs it once. To retrain every Monday at 3am, use 2 terminals:
+
+```bash
+uv run prefect server start          # terminal 1: prefect server, UI on http://127.0.0.1:4200
+uv run python -m src.modelling.deploy   # terminal 2: creates the "weekly-retraining" deployment (keep it running)
+```
+
+Open http://127.0.0.1:4200 to see the deployment and the flow runs. To test without waiting for Monday, click "Run" on the deployment in the UI, or in a 3rd terminal:
+`uv run prefect deployment run 'train-abalone-model/weekly-retraining'`
+
+`fastapi` is capped below 0.151 because newer versions break the Prefect server.
+
 ## Development
 
 ### Managing dependencies
