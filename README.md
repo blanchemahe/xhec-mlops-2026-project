@@ -34,12 +34,11 @@ Predict the age of abalones (number of shell rings) from simple physical measure
 git clone https://github.com/blanchemahe/xhec-mlops-2026-project.git
 cd xhec-mlops-2026-project
 
-# Create the virtual environment (.venv) and install all dependencies from uv.lock
-uv sync
-
-# Install the pre-commit hooks (ruff formatting/linting, notebook output stripping)
-uv run pre-commit install
+# Create the virtual environment (.venv), install all dependencies from uv.lock and the pre-commit hooks
+make install
 ```
+
+Once the dataset is downloaded (next section): `make train` trains the model, `make api` starts the API and the dashboard, `make test` runs the tests.
 
 To run any command inside the environment, prefix it with `uv run` (e.g. `uv run python ...`), or activate it with `source .venv/bin/activate`.
 
