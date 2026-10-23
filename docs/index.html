@@ -148,7 +148,7 @@
   <div class="timeline"><div class="bar"><i id="tl"></i></div><div><span>0</span><span>25 years</span></div></div>
 </section>
 
-<script>window.STATIC_DATA = {"model": {"intercept": 3.3879705265655398, "sex": {"M": 0.29763080666771574, "F": 0.2028506175833829, "I": -0.5004814242511388}, "coefficients": {"length": -4.423722926796281, "diameter": 12.41134929250356, "height": 26.321827242494898, "whole_weight": 9.190137859303162, "shucked_weight": -19.81100246710268, "viscera_weight": -10.863000972792442, "shell_weight": 6.651570988846761}, "ranges": {"length": [0.19835000000000003, 0.735, 0.545], "diameter": [0.14, 0.58, 0.425], "height": [0.045, 0.22, 0.14], "whole_weight": [0.03567, 2.141495, 0.8009999999999999], "shucked_weight": [0.0135, 0.9934899999999999, 0.336], "viscera_weight": [0.007835000000000002, 0.4744949999999999, 0.171], "shell_weight": [0.010335000000000002, 0.62, 0.23425]}}, "metrics": [{"date": "2026-10-23T13:39:33", "rmse": 2.1367848683624464, "mae": 1.5652132106917542}]};</script>
+<script>window.STATIC_DATA = {"model": {"intercept": 3.3879705265655398, "sex": {"M": 0.29763080666771574, "F": 0.2028506175833829, "I": -0.5004814242511388}, "coefficients": {"length": -4.423722926796281, "diameter": 12.41134929250356, "height": 26.321827242494898, "whole_weight": 9.190137859303162, "shucked_weight": -19.81100246710268, "viscera_weight": -10.863000972792442, "shell_weight": 6.651570988846761}, "ranges": {"length": [0.19835000000000003, 0.735, 0.545], "diameter": [0.14, 0.58, 0.425], "height": [0.045, 0.22, 0.14], "whole_weight": [0.03567, 2.141495, 0.8009999999999999], "shucked_weight": [0.0135, 0.9934899999999999, 0.336], "viscera_weight": [0.007835000000000002, 0.4744949999999999, 0.171], "shell_weight": [0.010335000000000002, 0.62, 0.23425]}}, "metrics": [{"date": "2026-10-23T13:39:33", "rmse": 2.1367848683624464, "mae": 1.5652132106917542}, {"date": "2026-10-23T13:40:37", "rmse": 2.1367848683624464, "mae": 1.5652132106917542}]};</script>
 <script>
 const $ = (id) => document.getElementById(id);
 // On a static host (no server) bin/build_static.py puts the model and the metrics in the page
@@ -198,12 +198,9 @@ function setField(key, value) {
   inputs[key].value = value;
   inputs[key].parentElement.querySelector("output").textContent = value.toFixed(3);
 }
-// the 3 parts (meat, viscera, shell) can't weigh more than the whole abalone
-function keepWeightsConsistent(changed) {
-  const sum = PARTS.reduce((t, k) => t + state[k], 0);
-  if (sum <= state.whole_weight) return;
-  if (changed === "whole_weight") PARTS.forEach((k) => setField(k, (state[k] * state.whole_weight) / sum));
-  else setField(changed, Math.max(model.ranges[changed][0], state.whole_weight - (sum - state[changed])));
+// each part (meat, viscera, shell) can't weigh more than the whole abalone
+function keepWeightsConsistent() {
+  PARTS.forEach((k) => { if (state[k] > state.whole_weight) setField(k, state.whole_weight); });
 }
 
 // Global weight of each measurement in the formula. The raw coefficients can't be compared
@@ -267,12 +264,10 @@ function buildControls() {
     setField(key, median);
     inputs[key].oninput = (e) => {
       setField(key, +e.target.value);
-      if (key === "whole_weight" || PARTS.includes(key)) keepWeightsConsistent(key);
+      if (key === "whole_weight" || PARTS.includes(key)) keepWeightsConsistent();
       changed();
     };
   }
-  // medians of the parts can add up to more than the median of the whole: fix once at start
-  keepWeightsConsistent("whole_weight");
 }
 $("sex").onclick = (e) => {
   if (!e.target.dataset.v) return;
