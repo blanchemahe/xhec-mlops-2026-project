@@ -197,12 +197,9 @@ function setField(key, value) {
   inputs[key].value = value;
   inputs[key].parentElement.querySelector("output").textContent = value.toFixed(3);
 }
-// the 3 parts (meat, viscera, shell) can't weigh more than the whole abalone
-function keepWeightsConsistent(changed) {
-  const sum = PARTS.reduce((t, k) => t + state[k], 0);
-  if (sum <= state.whole_weight) return;
-  if (changed === "whole_weight") PARTS.forEach((k) => setField(k, (state[k] * state.whole_weight) / sum));
-  else setField(changed, Math.max(model.ranges[changed][0], state.whole_weight - (sum - state[changed])));
+// each part (meat, viscera, shell) can't weigh more than the whole abalone
+function keepWeightsConsistent() {
+  PARTS.forEach((k) => { if (state[k] > state.whole_weight) setField(k, state.whole_weight); });
 }
 
 // Global weight of each measurement in the formula. The raw coefficients can't be compared
@@ -266,12 +263,10 @@ function buildControls() {
     setField(key, median);
     inputs[key].oninput = (e) => {
       setField(key, +e.target.value);
-      if (key === "whole_weight" || PARTS.includes(key)) keepWeightsConsistent(key);
+      if (key === "whole_weight" || PARTS.includes(key)) keepWeightsConsistent();
       changed();
     };
   }
-  // medians of the parts can add up to more than the median of the whole: fix once at start
-  keepWeightsConsistent("whole_weight");
 }
 $("sex").onclick = (e) => {
   if (!e.target.dataset.v) return;
