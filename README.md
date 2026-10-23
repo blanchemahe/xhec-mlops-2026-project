@@ -38,21 +38,13 @@ cd xhec-mlops-2026-project
 make install
 ```
 
-Once the dataset is downloaded (next section): `make train` trains the model, `make api` starts the API and the dashboard, `make test` runs the tests.
+`make train` trains the model, `make api` starts the API and the dashboard, `make test` runs the tests.
 
 To run any command inside the environment, prefix it with `uv run` (e.g. `uv run python ...`), or activate it with `source .venv/bin/activate`.
 
 ### Dataset
 
-Download the [Abalone dataset](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset) into the `data/` folder (ignored by git):
-
-```bash
-mkdir -p data
-curl -L -o data/abalone.zip https://www.kaggle.com/api/v1/datasets/download/rodolfomendes/abalone-dataset
-unzip -o data/abalone.zip -d data && rm data/abalone.zip
-```
-
-You should end up with `data/abalone.csv` (4,177 rows, 9 columns).
+The [Abalone dataset](https://www.kaggle.com/datasets/rodolfomendes/abalone-dataset) is in the repository: `data/abalone.csv` (4,177 rows, 9 columns).
 
 ## Notebooks (EDA and modelling)
 
@@ -100,7 +92,7 @@ Open http://127.0.0.1:4200 to see the deployment and the flow runs. To test with
 # Without Docker (train the model first)
 uv run uvicorn src.web_service.main:app --port 8001   # http://127.0.0.1:8001/docs
 
-# With Docker (needs data/abalone.csv, the model is trained at build)
+# With Docker (the model is trained at build)
 docker build -f Dockerfile.app -t abalone-app .
 docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-app   # API :8000, Prefect UI :4200
 ```
