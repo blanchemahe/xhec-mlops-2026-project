@@ -38,7 +38,7 @@ cd xhec-mlops-2026-project
 make install
 ```
 
-`make train` trains the model, `make api` starts the API and the dashboard, `make test` runs the tests.
+`make train` trains the model, `make api` starts the API and the dashboard, `make test` runs the tests, `make lint` runs the code checks and `make docker` builds and runs the image.
 
 To run any command inside the environment, prefix it with `uv run` (e.g. `uv run python ...`), or activate it with `source .venv/bin/activate`.
 
@@ -93,8 +93,7 @@ Open http://127.0.0.1:4200 to see the deployment and the flow runs. To test with
 uv run uvicorn src.web_service.main:app --port 8001   # http://127.0.0.1:8001/docs
 
 # With Docker (the model is trained at build)
-docker build -f Dockerfile.app -t abalone-app .
-docker run -p 0.0.0.0:8000:8001 -p 0.0.0.0:4200:4201 abalone-app   # API :8000, Prefect UI :4200
+make docker   # API :8000, Prefect UI :4200
 ```
 
 ```bash
