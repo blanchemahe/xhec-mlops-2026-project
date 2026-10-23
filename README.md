@@ -53,7 +53,7 @@ The analysis behind the model is in `notebooks/`:
 - `eda.ipynb`: data quality checks (9 physically impossible rows found), target and feature analysis, and the decisions taken for the modelling.
 - `modelling.ipynb`: baseline, linear regression and random forest compared by cross-validation, with every run tracked in MLflow. The linear regression is selected and registered as `abalone-rings-regressor` with the `champion` alias.
 
-Open them in VS Code or Jupyter with the `.venv` kernel, after downloading the dataset. The MLflow runs are stored locally in `mlflow.db` and `mlruns/` (ignored by git). To compare them, run from the project root, then open http://localhost:5001:
+Open them in VS Code or Jupyter with the `.venv` kernel. The MLflow runs are stored locally in `mlflow.db` and `mlruns/` (ignored by git). To compare them, run from the project root, then open http://localhost:5001:
 
 ```bash
 uv run mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5001
@@ -65,7 +65,7 @@ uv run mlflow ui --backend-store-uri sqlite:///mlflow.db --port 5001
 uv run python -m src.modelling.main data/abalone.csv
 ```
 
-The model is saved in `src/web_service/local_objects/model.pkl` (ignored by git). The code is in `src/modelling/`: `step1_preprocessing.py` (load + split), `step2_training.py` (model + metrics), `step2_1_utils.py` (save and load the model), `step3_predicting.py` (predict with the saved model), `main.py` (runs everything).
+The model is saved in `src/web_service/local_objects/model.pkl` (ignored by git). The code is in `src/modelling/`: `step1_preprocessing.py` (load, remove the erroneous rows found in the EDA, split), `step2_training.py` (model + metrics), `step2_1_utils.py` (save and load the model), `step3_predicting.py` (predict with the saved model), `main.py` (runs everything).
 The model is a linear regression, with `Sex` one-hot encoded inside a sklearn pipeline.
 
 Run the tests with `uv run pytest`.
