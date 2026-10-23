@@ -4,9 +4,30 @@ from sklearn.model_selection import train_test_split
 # The column we want to predict (the number of rings = the age)
 TARGET = "Rings"
 
+# Above this height an abalone is an error (found in the EDA)
+MAX_HEIGHT = 0.5
+WEIGHT_PART_COLS = ["Shucked weight", "Viscera weight", "Shell weight"]
+
+
+def get_erroneous_rows(df: pd.DataFrame) -> pd.Series:
+    """Flag the physically impossible rows (found in the EDA).
+
+    Args:
+        df: The abalone dataframe.
+
+    Returns:
+        A boolean series, True for the rows to remove.
+    """
+    return (
+        (df["Height"] <= 0)
+        | (df["Height"] > MAX_HEIGHT)
+        | (df["Diameter"] > df["Length"])
+        | df[WEIGHT_PART_COLS].gt(df["Whole weight"], axis=0).any(axis=1)
+    )
+
 
 def load_data(path: str) -> pd.DataFrame:
-    """Read the csv and drop the rows with a height of 0 (errors found in the EDA).
+    """Read the csv and drop the erroneous rows (see get_erroneous_rows).
 
     Args:
         path: Path to the abalone csv file.
@@ -15,8 +36,7 @@ def load_data(path: str) -> pd.DataFrame:
         The cleaned dataframe.
     """
     df = pd.read_csv(path)
-    # An abalone can't have a height of 0, so we keep only the rows with a real height
-    return df[df["Height"] > 0]
+    return df.loc[~get_erroneous_rows(df)]
 
 
 def split_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:

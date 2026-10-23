@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.modelling.step1_preprocessing import split_data
+from src.modelling.step1_preprocessing import get_erroneous_rows, split_data
 from src.modelling.step2_1_utils import load_pickle, pickle_object
 from src.modelling.step2_training import evaluate_model, train_model
 
@@ -32,3 +32,11 @@ def test_train_evaluate_and_pickle(tmp_path) -> None:  # noqa: ANN001
     pickle_object(model, tmp_path / "model.pkl")
     reloaded = load_pickle(tmp_path / "model.pkl")
     assert list(reloaded.predict(X_test)) == list(model.predict(X_test))
+
+
+def test_get_erroneous_rows() -> None:
+    """A zero height and a part heavier than the whole abalone are flagged, a normal row is not."""
+    df = make_fake_abalones(4)
+    df.loc[0, "Height"] = 0
+    df.loc[1, "Shell weight"] = df.loc[1, "Whole weight"] + 1
+    assert get_erroneous_rows(df).tolist() == [True, True, False, False]
